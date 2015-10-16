@@ -6,7 +6,7 @@ import (
 
 func InitRoutes() *mux.Router {
 	router := mux.NewRouter()
-	router = fetchDataRoutes(router)
-	router = queryRoutes(router)
+	router = EventListenerRoutes(router)
+	router = QueryRoutes(router)
 	return router
 }

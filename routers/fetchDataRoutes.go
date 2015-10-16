@@ -6,23 +6,20 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func FetchDataRoutes(router *mux.Router) *mux.Router {
-	router.Handle("/addUser",
+func EventListenerRoutes(router *mux.Router) *mux.Router {
+	router.Handle("/event",
 		negroni.New(
-			negroni.HandlerFunc(controllers.AddUser),
+			negroni.HandlerFunc(controllers.EventController),
 		)).Methods("POST")
-  router.Handle("/addItem",
+
+	return router
+}
+
+func QueryRoutes(router *mux.Router) *mux.Router {
+	router.Handle("/query",
 		negroni.New(
-			negroni.HandlerFunc(controllers.AddItem),
-		)).Methods("POST")
-  router.Handle("/deleteUser",
-		negroni.New(
-			negroni.HandlerFunc(controllers.DeleteUser),
-		)).Methods("POST")
-  router.Handle("/deleteItem",
-		negroni.New(
-			negroni.HandlerFunc(controllers.DeleteItem),
-		)).Methods("POST")
+			negroni.HandlerFunc(controllers.QueryController),
+		)).Methods("GET")
 
 	return router
 }

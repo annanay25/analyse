@@ -6,13 +6,14 @@ import (
   "log"
   "encoding/json"
 
-  "github.com/mgo"
+  // "github.com/mgo"
 )
 
-func (user models.User) AddUserToDatabase(){
-  session, err = mgo.Dial(127.0.0.1:3000)
-  if(err!= nil){
-    panic(err)
-  }
-  // Write to DB.
+func GetUserInfo(){
+  // Write the database access code here. Basically just send a request to an API that Goutham will write.
+  // And ask for all the information through that.
+}
+
+func GetProductInfo(){
+  // Write the database access code here.
 }
