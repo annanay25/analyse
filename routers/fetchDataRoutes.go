@@ -6,6 +6,24 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func AddUserRoutes(router *mux.Router) *mux.Router {
+	router.Handle("/AddUser",
+		negroni.New(
+			negroni.HandlerFunc(controllers.AddUser),
+		)).Methods("POST")
+
+	return router
+}
+
+func AddItemRoutes(router *mux.Router) *mux.Router {
+	router.Handle("/AddItem",
+		negroni.New(
+			negroni.HandlerFunc(controllers.AddItem),
+		)).Methods("POST")
+
+	return router
+}
+
 func EventListenerRoutes(router *mux.Router) *mux.Router {
 	router.Handle("/event",
 		negroni.New(

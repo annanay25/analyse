@@ -9,7 +9,7 @@ import (
 
   "github.com/annanay25/analyse/models"
 )
-// 
+//
 // func UpdateALSMatrix(event *models.Event){
 //
 // }
@@ -32,4 +32,12 @@ func EventController(w http.ResponseWriter, req *http.Request) {
 
   w.Header().Set("Content-Type", "application/json")
   w.WriteHeader(http.StatusOk)
+}
+
+func AddUser(w http.ResponseWriter, req *http.Request){
+  // Write code to add User to the ALS Matrix
+}
+
+func AddItem(w http.ResponseWriter, req *http.Request){
+  // Write code to add Item to the ALS Matrix
 }
