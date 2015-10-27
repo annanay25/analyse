@@ -9,10 +9,7 @@ import (
 
   "github.com/annanay25/analyse/models"
 )
-//
-// func UpdateALSMatrix(event *models.Event){
-//
-// }
+
 
 func EventController(w http.ResponseWriter, req *http.Request) {
 
@@ -35,9 +32,9 @@ func EventController(w http.ResponseWriter, req *http.Request) {
 }
 
 func AddUser(w http.ResponseWriter, req *http.Request){
-  // Write code to add User to the ALS Matrix
+  // Increase number of columns in the User Matrix 'X'
 }
 
 func AddItem(w http.ResponseWriter, req *http.Request){
-  // Write code to add Item to the ALS Matrix
+  // Increase number of columns in the Item Matrix 'Y'
 }
