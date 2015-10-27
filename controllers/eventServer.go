@@ -14,9 +14,9 @@ import (
 func EventController(w http.ResponseWriter, req *http.Request) {
 
   // Implementing the events server. Code for listening to the events will come here.
+  // Events are going to be view / buy events, with 'weightToAdd'. Add this to the Ratings matrix.
 
   fmt.Println("Hello")
-  // req.ParseForm()
   log.Println(req)
 
   example_event:= new(models.Event)
@@ -25,7 +25,12 @@ func EventController(w http.ResponseWriter, req *http.Request) {
 
   fmt.Println("Event: ")
   fmt.Println(example_event)
-  // example_user.AddUserToDatabase()
+  // Update values in ALS.Ratings_matrix
+  userID := example_event.userID
+  productID := example_event.productID
+  weightToAdd := example_event.weightToAdd
+
+  // Now add this to the Ratings matrix.
 
   w.Header().Set("Content-Type", "application/json")
   w.WriteHeader(http.StatusOk)

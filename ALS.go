@@ -30,7 +30,10 @@ func makeXY(numUsers int, numItems int, max_rating float64) (X,Y *DenseMatrix) {
 
 func MakeRatingsMatrix(numUsers int, numItems int){
   Ratings_data := make([]float64, numUsers*factors)
-  ratings_matrix := MakeDenseMatrix(X_data, numUsers, numItems)
+  Ratings_matrix := MakeDenseMatrix(X_data, numUsers, numItems)
+  for i := 0; i < len(Ratings_data); i++ {
+		Ratings_matrix[i]=0
+	}
 }
 
 func Train(){

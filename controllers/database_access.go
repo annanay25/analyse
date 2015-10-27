@@ -8,7 +8,7 @@ import (
   "encoding/json"
 )
 
-func GetUserInfo(){
+func GetUserInfo() (numUsers int) {
   // Write the database access code here. Basically just send a request to an API that Goutham will write.
   // And ask for all the information through that.
 
@@ -23,7 +23,7 @@ func GetUserInfo(){
   return resp.Body.numUsers
 }
 
-func GetProductInfo(){
+func GetProductInfo() (numItems int) {
   // Write the database access code here.
 
   // Just need number of items.
