@@ -28,13 +28,41 @@ func makeXY(numUsers int, numItems int, max_rating float64) (X,Y *DenseMatrix) {
   return
 }
 
-func MakeRatingsMatrix(numUsers int, numItems int){
-  Ratings_data := make([]float64, numUsers*factors)
-  Ratings_matrix := MakeDenseMatrix(X_data, numUsers, numItems)
+// Creates the main ratings matrix based on which ALS will operate.
+func MakeRatingsMatrix(numUsers int, numItems int)(Ratings_matrix *DenseMatrix){
+  Ratings_data := make([]float64, numUsers*numItems)
   for i := 0; i < len(Ratings_data); i++ {
-		Ratings_matrix[i]=0
+			Ratings_matrix[i]=0
 	}
+	return Ratings_matrix := MakeDenseMatrix(X_data, numUsers, numItems)
 }
+
+// Creates the preference matrix.
+func MakePreferenceMatrix(RM *DenseMatrix,numUsers int, numItems int)(Preference_matrix *DenseMatrix){
+	Preference_data := make([]float64, numUsers*numItems)
+	for i := 0; i < len(Ratings_data); i++ {
+			if RM[i] > 0 {
+				Preference_data[i]=1
+			} else {
+				Preference_data[i]=0
+			}
+	}
+	return Preference_Matrix := MakeDenseMatrix(Preference_data, numUsers, numItems)
+}
+
+// Creates the confidence matrix.
+func MakeConfidenceMatrix(RM *DenseMatrix,numUsers int, numItems int)(Confidence_Matrix *DenseMatrix){
+	alpha := 40
+	Confidence_data := make([]float64, numUsers*numItems)
+	for i := 0; i < len(Ratings_data); i++ {
+			row := i/numItems
+			col := i%numItems
+
+			Confidence_data[i] = 1 + alpha * RM[row][col]
+	}
+	return Confidence_Matrix := MakeDenseMatrix(Confidence_data, numUsers, numItems)
+}
+
 
 func Train(){
 

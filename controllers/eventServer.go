@@ -31,6 +31,7 @@ func EventController(w http.ResponseWriter, req *http.Request) {
   weightToAdd := example_event.weightToAdd
 
   // Now add this to the Ratings matrix.
+  // Add ALS.Train() here.
 
   w.Header().Set("Content-Type", "application/json")
   w.WriteHeader(http.StatusOk)
