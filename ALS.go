@@ -9,8 +9,8 @@ import (
 	"github.com/skelterjohn/go.matrix"
 )
 
-
-func makeXY(numUsers int, numItems int, max_rating float64) (X,Y *DenseMatrix) {
+// Creating the matrices.
+func MakeXY(numUsers int, numItems int, max_rating float64) (X,Y *DenseMatrix) {
   rand.Seed(int64(seed))
   factors:=5
   X_data := make([]float64, numUsers*factors)
@@ -28,48 +28,70 @@ func makeXY(numUsers int, numItems int, max_rating float64) (X,Y *DenseMatrix) {
   return
 }
 
-// Creates the main ratings matrix based on which ALS will operate.
-func MakeRatingsMatrix(numUsers int, numItems int)(Ratings_matrix *DenseMatrix){
+func MakeRatingsMatrix(numUsers int, numItems int)(Ratings_Matrix *DenseMatrix){
   Ratings_data := make([]float64, numUsers*numItems)
   for i := 0; i < len(Ratings_data); i++ {
-			Ratings_matrix[i]=0
+			Ratings_Matrix[i]=0
 	}
-	return Ratings_matrix := MakeDenseMatrix(X_data, numUsers, numItems)
+	return Ratings_Matrix := MakeDenseMatrix(X_data, numUsers, numItems)
 }
 
-// Creates the preference matrix.
-func MakePreferenceMatrix(RM *DenseMatrix,numUsers int, numItems int)(Preference_matrix *DenseMatrix){
+func MakePreferenceMatrix(numUsers int, numItems int)(Preference_Matrix *DenseMatrix){
 	Preference_data := make([]float64, numUsers*numItems)
-	for i := 0; i < len(Ratings_data); i++ {
-			if RM[i] > 0 {
-				Preference_data[i]=1
-			} else {
-				Preference_data[i]=0
-			}
+	for i := 0; i < len(Preference_data); i++ {
+			Preference_data[i]=0
 	}
-	return Preference_Matrix := MakeDenseMatrix(Preference_data, numUsers, numItems)
+	Preference_Matrix := MakeDenseMatrix(Preference_data, numUsers, numItems)
+}
+
+func MakeConfidenceMatrix(numUsers int, numItems int)(Confidence_Matrix *DenseMatrix){
+	Confidence_data := make([]float64, numUsers*numItems)
+	for i := 0; i < len(Confidence_data); i++ {
+			Confidence_data[i]=0
+	}
+	Confidence_Matrix := MakeDenseMatrix(Confidence_data, numUsers, numItems)
+}
+
+// Updates the preference matrix. Function call is from QueryController.
+func UpdatePreferenceMatrix(RM *DenseMatrix,PM *DenseMatrix,numUsers int, numItems int)(Preference_Matrix *DenseMatrix){
+	// ROWS: numUsers, COLS: numItems.
+	for i := 0; i < numUsers; i++ {
+		for j := 0; j < numItems ; j++{
+			if RM.Get(i, j) > 0 {
+				PM.Set(i, j, 1)
+			} else {
+				PM.Set(i, j, 0)
+			}
+		}
+	}
+	return PM
 }
 
 // Creates the confidence matrix.
-func MakeConfidenceMatrix(RM *DenseMatrix,numUsers int, numItems int)(Confidence_Matrix *DenseMatrix){
+func UpdateConfidenceMatrix(PM *DenseMatrix,CM *DenseMatrix,numUsers int, numItems int)(Confidence_Matrix *DenseMatrix){
 	alpha := 40
-	Confidence_data := make([]float64, numUsers*numItems)
-	for i := 0; i < len(Ratings_data); i++ {
-			row := i/numItems
-			col := i%numItems
 
-			Confidence_data[i] = 1 + alpha * RM[row][col]
+	for i := 0; i < numUsers; i++ {
+		for j := 0; j < numItems ; j++{
+			value := 1 + alpha * PM.Get(i, j)
+			CM.Set(i, j, value)
+		}
 	}
-	return Confidence_Matrix := MakeDenseMatrix(Confidence_data, numUsers, numItems)
+	return CM
 }
 
-
-func Train(){
-
-  // Make the User and Item matrices.
+func Prepare(){
+	// Make the User and Item matrices.
   numUsers:= controllers.GetUserInfo()
   numItems:= controllers.GetProductInfo()
-  ratings:=MakeRatingsMatrix(numUsers, numItems)
+  Ratings_Matrix:=MakeRatingsMatrix(numUsers, numItems)
+	Preference_Matrix := MakePreferenceMatrix(Ratings_Matrix, numUsers, numItems)
+	Confidence_Matrix := MakeConfidenceMatrix(Preference_Matrix, numUsers, numItems)
   // We need max_rating from this but we cannot get that until training is done.
-  X, Y:= makeXY(numUsers, numItems)
+  X, Y:= MakeXY(numUsers, numItems)
+}
+
+func Train(){
+	
+
 }

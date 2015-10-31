@@ -11,6 +11,7 @@ func main() {
   router := routers.InitRoutes()
 	n := negroni.Classic()
 	n.UseHandler(router)
-  ALS.Train()
+  ALS.Prepare()
+  // ALS.Train()
 	http.ListenAndServe(":8080", n)
 }

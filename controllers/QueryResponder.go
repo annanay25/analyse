@@ -8,4 +8,7 @@ import (
 
 func QueryController(){
   // Query handling comes here.
+
+  // Calculate the xTy matrix products and get the top recommendations.
+
 }
