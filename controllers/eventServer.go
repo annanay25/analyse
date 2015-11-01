@@ -8,6 +8,7 @@ import (
   "encoding/json"
 
   "github.com/annanay25/analyse/models"
+  "github.com/skelterjohn/go.matrix"
 )
 
 
@@ -30,9 +31,20 @@ func EventController(w http.ResponseWriter, req *http.Request) {
   productID := example_event.productID
   weightToAdd := example_event.weightToAdd
 
+  // Get which user this userID belongs to.
+  i := 0
+  for controllers.UserDB[i] != userID {
+    i ++
+  }
+  userNumber := i
+
+  i = 0
+  for controllers.ProductDB[i] != productID {
+    i++
+  }
+  productNumber := i
   // Now add this to the Ratings matrix.
-  // ALS.Train()
-  // Instead of ALS.Train() make it UpdatePreferenceMatrix() and UpdateConfidenceMatrix().
+  ALS.Ratings_Matrix.Set(userNumber, productNumber, weightToAdd)
 
   w.Header().Set("Content-Type", "application/json")
   w.WriteHeader(http.StatusOk)

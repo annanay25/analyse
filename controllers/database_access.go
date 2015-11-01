@@ -19,7 +19,11 @@ func GetUserInfo() (numUsers int) {
   }
   defer resp.Body.Close()
   body, error := ioutil.ReadAll(resp.Body)
-
+  // Update the UserDB.
+  UserDB := make([]string, resp.Body.numUsers)
+  for i:=0; i<resp.Body.numUsers; i++ {
+    UserDB[i] = resp.Body.UserID[i]
+  }
   return resp.Body.numUsers
 }
 
@@ -33,6 +37,10 @@ func GetProductInfo() (numItems int) {
   }
   defer resp.Body.Close()
   body, error := ioutil.ReadAll(resp.Body)
-
+  // Update the ProductDB.
+  ProductDB := make([]string, resp.Body.numItems)
+  for i:=0; i<resp.Body.numItems; i++ {
+    ProductDB[i] = resp.Body.UserID[i]
+  }
   return resp.Body.numItems
 }

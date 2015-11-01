@@ -12,7 +12,7 @@ import (
 // Creating the matrices.
 func MakeXY(numUsers int, numItems int, max_rating float64) (X,Y *DenseMatrix) {
   rand.Seed(int64(seed))
-  factors:=5
+  factors:=10
   X_data := make([]float64, numUsers*factors)
   Y_data := make([]float64, numItems*factors)
 
@@ -92,6 +92,58 @@ func Prepare(){
 }
 
 func Train(){
-	
+	UpdatePreferenceMatrix(Ratings_Matrix, Preference_Matrix, numUsers, numItems)
+	UpdateConfidenceMatrix(Preference_Matrix, Confidence_Matrix, numUsers, numItems)
+}
 
+// a function to set the values for a given row
+func setRow(mat *DenseMatrix, which int, row []float64) *DenseMatrix {
+	if mat.Cols() != len(row) {
+		fmt.Println("The row to set needs to be the same dimension as the matrix")
+	}
+	// iterate over columns to set the values for a selected row
+	for i := 0; i < mat.Cols(); i++ {
+		mat.Set(which, i, row[i])
+	}
+	return mat
+}
+
+// a function to set the values for a given column
+func setCol(mat *DenseMatrix, which int, col []float64) *DenseMatrix {
+	if mat.Rows() != len(col) {
+		fmt.Println("The column to set needs to be the same dimension as the matrix")
+	}
+	// iterate over rows to set the values for a selected columns
+	for i := 0; i < mat.Rows(); i++ {
+		mat.Set(i, which, col[i])
+	}
+	return mat
+}
+
+func ALS(){
+	lambda := 0.1
+	yTy := Product(Y.Transpose(), Y)
+
+	for i := 0; i < numUsers; i++ {
+		// Identity matrix of order n X n.
+		CU := Eye(numItems)
+		I := Eye(numItems)
+
+		for ii :=0; ii < numItems; ii++ {
+			CU.Set(ii, ii, CM.Get(i, ii))
+		}
+
+		Middle := Difference(CU, I)
+		Middle = Product(Y.Transpose(), Middle)
+		Middle = Product(Middle, Y)
+		ToBeInversed := yTy.Add(Middle)
+		ToBeInversed := ToBeInversed.Add(Scaled(I, lambda))
+		Inversed, err := ToBeInversed.Inverse()
+		if(err != nil){
+			log.Println("Matrix inversion failed.")
+		}
+		Inversed_yT := Product(Inversed, Y.Transpose())
+		Inversed_yT_Cu := Product(Inversed_yT, CU)
+
+		// Multiply this by the p(u) vector.
 }
