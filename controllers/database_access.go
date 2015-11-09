@@ -19,6 +19,14 @@ func GetUserInfo() (numUsers int) {
   }
   defer resp.Body.Close()
   body, error := ioutil.ReadAll(resp.Body)
+
+  // Not sure if this.
+
+  // User := new(models.User)
+  // UserDB := make([]User, resp.Body.numUsers)
+  // decoder := json.NewDecoder(resp.Body)
+  // decoder.Decode(&UserDB)
+
   // Update the UserDB.
   UserDB := make([]string, resp.Body.numUsers)
   for i:=0; i<resp.Body.numUsers; i++ {

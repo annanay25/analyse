@@ -4,7 +4,6 @@ import (
   "github.com/annanay25/analyse/routers"
   "github.com/codegangsta/negroni"
   "net/http"
-
 )
 
 func main() {
@@ -12,6 +11,5 @@ func main() {
 	n := negroni.Classic()
 	n.UseHandler(router)
   ALS.Prepare()
-  // ALS.Train()
 	http.ListenAndServe(":8080", n)
 }

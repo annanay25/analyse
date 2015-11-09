@@ -68,12 +68,12 @@ func UpdatePreferenceMatrix(RM *DenseMatrix,PM *DenseMatrix,numUsers int, numIte
 }
 
 // Creates the confidence matrix.
-func UpdateConfidenceMatrix(PM *DenseMatrix,CM *DenseMatrix,numUsers int, numItems int)(Confidence_Matrix *DenseMatrix){
+func UpdateConfidenceMatrix(RM *DenseMatrix,CM *DenseMatrix,numUsers int, numItems int)(Confidence_Matrix *DenseMatrix){
 	alpha := 40
 
 	for i := 0; i < numUsers; i++ {
 		for j := 0; j < numItems ; j++{
-			value := 1 + alpha * PM.Get(i, j)
+			value := 1 + alpha * RM.Get(i, j)
 			CM.Set(i, j, value)
 		}
 	}
@@ -85,15 +85,15 @@ func Prepare(){
   numUsers:= controllers.GetUserInfo()
   numItems:= controllers.GetProductInfo()
   Ratings_Matrix:=MakeRatingsMatrix(numUsers, numItems)
-	Preference_Matrix := MakePreferenceMatrix(Ratings_Matrix, numUsers, numItems)
-	Confidence_Matrix := MakeConfidenceMatrix(Preference_Matrix, numUsers, numItems)
+	Preference_Matrix := MakePreferenceMatrix(numUsers, numItems)
+	Confidence_Matrix := MakeConfidenceMatrix(numUsers, numItems)
   // We need max_rating from this but we cannot get that until training is done.
-  X, Y:= MakeXY(numUsers, numItems)
+  X, Y := MakeXY(numUsers, numItems)
 }
 
 func Train(){
 	UpdatePreferenceMatrix(Ratings_Matrix, Preference_Matrix, numUsers, numItems)
-	UpdateConfidenceMatrix(Preference_Matrix, Confidence_Matrix, numUsers, numItems)
+	UpdateConfidenceMatriqx(Ratings_Matrix, Confidence_Matrix, numUsers, numItems)
 }
 
 // a function to set the values for a given row
@@ -120,30 +120,67 @@ func setCol(mat *DenseMatrix, which int, col []float64) *DenseMatrix {
 	return mat
 }
 
-func ALS(){
-	lambda := 0.1
+func ALS(iterations int, lambda int){
+	// lambda := 0.1
 	yTy := Product(Y.Transpose(), Y)
+	xTx := Product(X.Transpose(), X)
+	for iter := 0; iter < iterations; iter++ {
+		// Solving for user matrix.
+		for i := 0; i < numUsers; i++ {
+			// Identity matrix of order n X n. Where n:= number of items.
+			CU := Eye(numItems)
+			I := Eye(numItems)
 
-	for i := 0; i < numUsers; i++ {
-		// Identity matrix of order n X n.
-		CU := Eye(numItems)
-		I := Eye(numItems)
+			for ii :=0; ii < numItems; ii++ {
+				CU.Set(ii, ii, CM.Get(i, ii))
+			}
 
-		for ii :=0; ii < numItems; ii++ {
-			CU.Set(ii, ii, CM.Get(i, ii))
+			Middle := Difference(CU, I)
+			Middle = Product(Y.Transpose(), Middle)
+			Middle = Product(Middle, Y)
+			ToBeInversed := yTy.Add(Middle)
+			ToBeInversed = ToBeInversed.Add(Scaled(I, lambda))
+			Inversed, err := ToBeInversed.Inverse()
+			if(err != nil){
+				log.Println("Matrix inversion failed.")
+			}
+			Inversed_yT := Product(Inversed, Y.Transpose())
+			Inversed_yT_Cu := Product(Inversed_yT, CU)
+
+			// Multiply this by the p(u) vector.
+			Complete := Product(Inversed_yT_Cu, PM.GetRowVector(i).Transpose())
+			X = setRow(X, i, Complete.Array())
 		}
 
-		Middle := Difference(CU, I)
-		Middle = Product(Y.Transpose(), Middle)
-		Middle = Product(Middle, Y)
-		ToBeInversed := yTy.Add(Middle)
-		ToBeInversed := ToBeInversed.Add(Scaled(I, lambda))
-		Inversed, err := ToBeInversed.Inverse()
-		if(err != nil){
-			log.Println("Matrix inversion failed.")
-		}
-		Inversed_yT := Product(Inversed, Y.Transpose())
-		Inversed_yT_Cu := Product(Inversed_yT, CU)
+		// Solving for Item matrix now.
+		for i = 0; i < numItems; i++ {
+			// Identity matrix of order m X m.
+			CI := Eye(numUsers)
+			II := Eye(numUsers)
 
-		// Multiply this by the p(u) vector.
+			for jj :=0; jj < numUsers ; jj++ {
+				CI.Set(jj, jj, CM.Get(jj, i))
+			}
+
+			MiddleI := Difference(CI, II)
+			MiddleI = Product(X.Transpose(), MiddleI)
+			MiddleI = Product(MiddleI, X)
+			ToBeInversedI := xTx.Add(MiddleI)
+			ToBeInversedI = ToBeInversedI.Add(Scaled(II, lambda))
+			InversedI, errI := ToBeInversedI.Inverse()
+			if(errI != nil){
+				log.Println("Matrix inversion failed.")
+			}
+			Inversed_yTI := Product(InversedI, X.Transpose())
+			Inversed_yT_CiI := Product(Inversed_yTI, CI)
+
+			// Multiply by p(i) vector
+			CompleteI := Product(Inversed_yT_CiI, PM.GetColVector().Transpose())
+			Y = setCol(Y, i, CompleteI.Array())
+		}
+	}
+}
+
+func TopNRec(){
+	
 }
