@@ -82,16 +82,18 @@ func UpdateConfidenceMatrix(RM *DenseMatrix,CM *DenseMatrix,numUsers int, numIte
 
 func Prepare(){
 	// Make the User and Item matrices.
-  numUsers:= controllers.GetUserInfo()
-  numItems:= controllers.GetProductInfo()
+  numUsers:= controllers.GetNumUsers()
+  numItems:= controllers.GetNumItems()
   Ratings_Matrix:=MakeRatingsMatrix(numUsers, numItems)
 	Preference_Matrix := MakePreferenceMatrix(numUsers, numItems)
 	Confidence_Matrix := MakeConfidenceMatrix(numUsers, numItems)
-  // We need max_rating from this but we cannot get that until training is done.
+  // TODO: We need max_rating from this but we cannot get that until training is done.
   X, Y := MakeXY(numUsers, numItems)
 }
 
 func Train(){
+	numUsers:= controllers.GetNumUsers()
+	numItems:= controllers.GetNumItems()
 	UpdatePreferenceMatrix(Ratings_Matrix, Preference_Matrix, numUsers, numItems)
 	UpdateConfidenceMatriqx(Ratings_Matrix, Confidence_Matrix, numUsers, numItems)
 }
@@ -122,6 +124,8 @@ func setCol(mat *DenseMatrix, which int, col []float64) *DenseMatrix {
 
 func ALS(iterations int, lambda int){
 	// lambda := 0.1
+	numUsers:= controllers.GetNumUsers()
+  numItems:= controllers.GetNumItems()
 	yTy := Product(Y.Transpose(), Y)
 	xTx := Product(X.Transpose(), X)
 	for iter := 0; iter < iterations; iter++ {
@@ -181,6 +185,12 @@ func ALS(iterations int, lambda int){
 	}
 }
 
-func TopNRec(){
-	
+
+func AddUser(){
+  // Increase number of columns in the User Matrix 'X'
+
+}
+
+func AddItem(w http.ResponseWriter, req *http.Request){
+  // Increase number of columns in the Item Matrix 'Y'
 }

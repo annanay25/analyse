@@ -15,9 +15,7 @@ Functions and API:
 
 Routes:  
 1. POST /event  
-2. GET /query  
-3. POST /AddUser  
-4. POST /AddItem  
+2. POST /query  
 
 Usage:  
 

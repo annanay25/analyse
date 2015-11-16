@@ -4,13 +4,6 @@ package models
 type struct query {
   userID string
   num int     // Number of recommendations required.
-  blackListed []string
-}
-
-type struct itemScores {
-  userID string
-  productID string
-  score int
 }
 
 type struct prediction {

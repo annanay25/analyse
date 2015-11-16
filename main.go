@@ -10,6 +10,8 @@ func main() {
   router := routers.InitRoutes()
 	n := negroni.Classic()
 	n.UseHandler(router)
+  NumUsers := 0
+  NumItems := 0
   ALS.Prepare()
 	http.ListenAndServe(":8080", n)
 }

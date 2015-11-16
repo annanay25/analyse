@@ -1,4 +1,4 @@
-// Expose API endpoint to add and delete users, items.
+// API endpoint for event queue consumption.
 package controllers
 
 import (
@@ -17,7 +17,6 @@ func EventController(w http.ResponseWriter, req *http.Request) {
   // Implementing the events server. Code for listening to the events will come here.
   // Events are going to be view / buy events, with 'weightToAdd'. Add this to the Ratings matrix.
 
-  fmt.Println("Hello")
   log.Println(req)
 
   example_event:= new(models.Event)
@@ -27,33 +26,72 @@ func EventController(w http.ResponseWriter, req *http.Request) {
   fmt.Println("Event: ")
   fmt.Println(example_event)
   // Update values in ALS.Ratings_matrix
-  userID := example_event.userID
-  productID := example_event.productID
-  weightToAdd := example_event.weightToAdd
+  UserID := example_event.UserID
+  ProductID := example_event.ProductID
+  Event := example_event.Event
+
+  // Calculate weight to add.
+  if Event == "View Product" {
+    weightToAdd = 0.1
+  }
+  if Event == "Add Product to Cart" {
+    weightToAdd = 0.5
+  }
+  if Event == "Delete from Cart" {
+    weightToAdd = 0.2
+  }
 
   // Get which user this userID belongs to.
   i := 0
-  for controllers.UserDB[i] != userID {
-    i ++
+  if NumUsers==0 {
+    UserDB := make([]string, 1)
+    UserDB[0] = UserID
+    NumUsers = NumUsers +1
+    ALS.AddUser()
+  }
+  for i=0; i<NumUsers; i++ {
+    if UserDB[i] = UserID {
+      break
+    }
+  }
+  if(i == NumUsers){
+    // User does not exist. Add to UserDB.
+    UserDB = append(UserDB, UserID)
+    NumUsers = NumUsers+1
+    ALS.AddUser()
   }
   userNumber := i
 
   i = 0
-  for controllers.ProductDB[i] != productID {
-    i++
+  if NumItems==0 {
+    ProductDB := make([]string, 1)
+    ProductDB[0] = ProductID
+    NumItems = NumItems +1
+    ALS.AddItem()
+  }
+  for i=0; i<NumItems; i++ {
+    if ProductDB[i] = ProductID {
+      break
+    }
+  }
+  if(i == NumItems){
+    // User does not exist. Add to UserDB.
+    ProductDB = append(ProductDB, ProductID)
+    NumItems = NumItems+1
+    ALS.AddItem()
   }
   productNumber := i
+
   // Now add this to the Ratings matrix.
   ALS.Ratings_Matrix.Set(userNumber, productNumber, weightToAdd)
-
   w.Header().Set("Content-Type", "application/json")
   w.WriteHeader(http.StatusOk)
 }
 
-func AddUser(w http.ResponseWriter, req *http.Request){
-  // Increase number of columns in the User Matrix 'X'
+func GetNumUsers() (NumUsers int){
+  return NumUsers
 }
 
-func AddItem(w http.ResponseWriter, req *http.Request){
-  // Increase number of columns in the Item Matrix 'Y'
+func GetNumItems() (NumItems int){
+  return NumItems
 }
