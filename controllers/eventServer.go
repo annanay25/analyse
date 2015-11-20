@@ -46,7 +46,7 @@ func EventController(w http.ResponseWriter, req *http.Request) {
   if NumUsers==0 {
     UserDB := make([]string, 1)
     UserDB[0] = UserID
-    NumUsers = NumUsers +1
+    NumUsers = 1
     ALS.AddUser()
   }
   for i=0; i<NumUsers; i++ {
@@ -66,7 +66,7 @@ func EventController(w http.ResponseWriter, req *http.Request) {
   if NumItems==0 {
     ProductDB := make([]string, 1)
     ProductDB[0] = ProductID
-    NumItems = NumItems +1
+    NumItems = 1
     ALS.AddItem()
   }
   for i=0; i<NumItems; i++ {

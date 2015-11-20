@@ -87,7 +87,7 @@ func Prepare(){
   Ratings_Matrix:=MakeRatingsMatrix(numUsers, numItems)
 	Preference_Matrix := MakePreferenceMatrix(numUsers, numItems)
 	Confidence_Matrix := MakeConfidenceMatrix(numUsers, numItems)
-  // TODO: We need max_rating from this but we cannot get that until training is done.
+	max_rating := GetMaxRating()
   X, Y := MakeXY(numUsers, numItems)
 }
 
